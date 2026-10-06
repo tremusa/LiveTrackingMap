@@ -64,9 +64,25 @@ jobs:
         working-directory: _tremuterminal
         run: gradle --no-daemon assembleDebug --stacktrace
 
-      - name: Upload APK
+      - name: Package final delivery
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp _tremuterminal/app/build/outputs/apk/debug/app-debug.apk TremuTerminal-debug.apk
+          rm -rf _tremuterminal/app/build _tremuterminal/.gradle
+          (
+            cd _tremuterminal
+            zip -qr ../TremuTerminal-source.zip .               -x '.git/*' '.worktrees/*' '.superpowers/*'
+          )
+          test -s TremuTerminal-debug.apk
+          test -s TremuTerminal-source.zip
+          sha256sum TremuTerminal-debug.apk TremuTerminal-source.zip
+
+      - name: Upload final delivery
         uses: actions/upload-artifact@v4
         with:
-          name: TremuTerminal-debug-apk
-          path: _tremuterminal/app/build/outputs/apk/debug/app-debug.apk
+          name: TremuTerminal-final-delivery
+          path: |
+            TremuTerminal-debug.apk
+            TremuTerminal-source.zip
           if-no-files-found: error
