@@ -28,6 +28,9 @@ jobs:
           cat .tremuterminal/chunk_*.b64 > /tmp/TremuTerminal.zip.b64
           base64 -d /tmp/TremuTerminal.zip.b64 > /tmp/TremuTerminal.zip
           unzip -q /tmp/TremuTerminal.zip -d _tremuterminal
+          if [ -d .tremuterminal/overrides ]; then
+            cp -a .tremuterminal/overrides/. _tremuterminal/
+          fi
           test -f _tremuterminal/settings.gradle.kts
           test -f _tremuterminal/app/build.gradle.kts
 
